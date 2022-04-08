@@ -39,4 +39,3 @@ BIPs disabled in USDI (up-to-date up to **v1.13.2.1**):
 * [`BIP 143`](https://github.com/bitcoin/bips/blob/master/bip-0143.mediawiki)
 * [`BIP 144`](https://github.com/bitcoin/bips/blob/master/bip-0144.mediawiki)
 * [`BIP 145`](https://github.com/bitcoin/bips/blob/master/bip-0145.mediawiki)
-* [`BIP 152`](https://github.com/bitcoin/bips/blob/master/bip-0152.mediawiki)

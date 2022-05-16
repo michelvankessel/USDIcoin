@@ -2405,7 +2405,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
                         REJECT_INVALID, "bad-diffbits");
 
     // Check proof-of-stake
-    if (block.IsProofOfStake()) && !CheckProofOfStake(pindex->pprev, block.vtx[1], block.nBits, state)) {
+    if (block.IsProofOfStake() && !CheckProofOfStake(pindex->pprev, block.vtx[1], block.nBits, state)) {
         LogPrintf("ConnectBlock(): WARNING: %s: check proof-of-stake failed for block %s\n", __func__, block.GetHash().ToString());
         return false; // do not error here as we expect this during initial block download
     }

@@ -74,7 +74,7 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
  */
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
-    const char* pszTimestamp = "Keep up with inflation using USDI coin 16/may/2022";
+    const char* pszTimestamp = "Keep up with inflation using USDI coin 17/may/2022";
     const CScript genesisOutputScript = CScript() << ParseHex("042c98b5c882539a9fa30cbc58a11db2b58e7361ffbaba911da56504684a70bf7483fc6a238dfb3d570e1c1abdd503d82989bd675528c16cdbe392c7c8f0131976") << OP_CHECKSIG;
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
 }
@@ -132,9 +132,9 @@ public:
         nDefaultPort = 7433;
         nPruneAfterHeight = 100000;
 
-        genesis = CreateGenesisBlock(1652716800, 419733890, 0x1d00ffff, 1, 0);
+        genesis = CreateGenesisBlock(1652770800, 566574053, 0x1d00ffff, 1, 0);
         consensus.hashGenesisBlock = genesis.GetHash();
-        /* calculate main genesis block
+        /*calculate main genesis block
         consensus.hashGenesisBlock = uint256S("0x00");
         if (true && (genesis.GetHash() != consensus.hashGenesisBlock)) {
 		std::cout << std::string("Calculating main genesis block...\n");
@@ -155,8 +155,8 @@ public:
             std::cout << "blockhash: " << genesis.GetHash().ToString().c_str() << "\n";
             std::cout << "merklehash: " << genesis.hashMerkleRoot.ToString().c_str() << "\n";
         }*/
-        assert(consensus.hashGenesisBlock == uint256S("0x000000003c008e29ee1fb22fc83668cec0ffbe99e67c97c3f4963b117e0922a5"));
-        assert(genesis.hashMerkleRoot == uint256S("0x10b0dac5b1a8dbc005a38e91d7712592e84f2662332306d6f54b3cbdf9294601"));
+        assert(consensus.hashGenesisBlock == uint256S("0x0000000042b9aed1976bfddc24a145852325d9f453f0a52d40154de11eac7bd9"));
+        assert(genesis.hashMerkleRoot == uint256S("0xdb48e2b1ba07270d105ae4a71c05eaf7054957057ac10c32ba38c3d02dec9ef2"));
 
         vSeeds.push_back(CDNSSeedData("seed1.usdicoin.com", "seed1.usdicoin.com"));
         vSeeds.push_back(CDNSSeedData("seed2.usdicoin.com", "seed2.usdicoin.com"));
@@ -178,7 +178,7 @@ public:
 
         checkpointData = (CCheckpointData) {
                     boost::assign::map_list_of
-                    ( 0, uint256S("0x000000003c008e29ee1fb22fc83668cec0ffbe99e67c97c3f4963b117e0922a5")),
+                    ( 0, uint256S("0x0000000042b9aed1976bfddc24a145852325d9f453f0a52d40154de11eac7bd9")),
                     0, // * UNIX timestamp of last checkpoint block
                     0,    // * total number of transactions between genesis and last checkpoint
                                 //   (the tx=... number in the SetBestChain debug.log lines)
@@ -229,9 +229,9 @@ public:
 
         nPruneAfterHeight = 100000;
 
-        genesis = CreateGenesisBlock(1652716800, 254931, 0x1f00ffff, 1, 0);
-        consensus.hashGenesisBlock = genesis.GetHash();
-        /* calculate test genesis block
+        genesis = CreateGenesisBlock(1655449200, 0, 0x1d00ffff, 1, 0);
+        //consensus.hashGenesisBlock = genesis.GetHash();
+        // calculate test genesis block
         consensus.hashGenesisBlock = uint256S("0x00");
         if (true && (genesis.GetHash() != consensus.hashGenesisBlock)) {
 		std::cout << std::string("Calculating testnet genesis block...\n");
@@ -251,7 +251,7 @@ public:
             std::cout << "time: " << genesis.nTime << "\n";
             std::cout << "blockhash: " << genesis.GetHash().ToString().c_str() << "\n";
             std::cout << "merklehash: " << genesis.hashMerkleRoot.ToString().c_str() << "\n";
-        }*/
+        }
         assert(consensus.hashGenesisBlock == uint256S("0x0000ab49a2600e19a2f42dd0cdff32350d8b919bf4ff65bc2e33db2b2c0aa22f"));
         assert(genesis.hashMerkleRoot == uint256S("0x10b0dac5b1a8dbc005a38e91d7712592e84f2662332306d6f54b3cbdf9294601"));
 
@@ -325,7 +325,7 @@ public:
         nDefaultPort = 27433;
         nPruneAfterHeight = 100000;
 
-	genesis = CreateGenesisBlock(1652717000, 209997, 0x1f00ffff, 1, 0);
+	genesis = CreateGenesisBlock(1652772600, 0, 0x1d00ffff, 1, 0);
         consensus.hashGenesisBlock = genesis.GetHash();
         /*calculate regtest genesis block
         consensus.hashGenesisBlock = uint256S("0x00");

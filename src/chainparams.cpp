@@ -74,7 +74,7 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
  */
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
-    const char* pszTimestamp = "Keep up with inflation using USDI coin 16/mar/2022";
+    const char* pszTimestamp = "Keep up with inflation using USDI coin 16/may/2022";
     const CScript genesisOutputScript = CScript() << ParseHex("042c98b5c882539a9fa30cbc58a11db2b58e7361ffbaba911da56504684a70bf7483fc6a238dfb3d570e1c1abdd503d82989bd675528c16cdbe392c7c8f0131976") << OP_CHECKSIG;
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
 }
@@ -132,10 +132,10 @@ public:
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
          * a large 32-bit integer with any alignment.
          */
-        pchMessageStart[0] = 0xa1;
-        pchMessageStart[1] = 0xb2;
+        pchMessageStart[0] = 0xa2;
+        pchMessageStart[1] = 0xb3;
         pchMessageStart[2] = 0xc4;
-        pchMessageStart[3] = 0xd8;
+        pchMessageStart[3] = 0xd5;
         nDefaultPort = 7433;
         nPruneAfterHeight = 100000;
 
@@ -225,10 +225,10 @@ public:
         consensus.nStakeTimestampMask = 0xf;
         consensus.nCoinbaseMaturity = 10;
 
-        pchMessageStart[0] = 0xb1;
-        pchMessageStart[1] = 0xc2;
-        pchMessageStart[2] = 0xd4;
-        pchMessageStart[3] = 0xa8;
+        pchMessageStart[0] = 0xb2;
+        pchMessageStart[1] = 0xc1;
+        pchMessageStart[2] = 0xd8;
+        pchMessageStart[3] = 0xa4;
         nDefaultPort = 17433;
 
         // The best chain should have at least this much work.
@@ -337,10 +337,10 @@ public:
         consensus.nStakeTimestampMask = 0xf;
         consensus.nCoinbaseMaturity = 10;
 
-        pchMessageStart[0] = 0xc1;
-        pchMessageStart[1] = 0xd2;
-        pchMessageStart[2] = 0xa4;
-        pchMessageStart[3] = 0xb8;
+        pchMessageStart[0] = 0xc8;
+        pchMessageStart[1] = 0xd4;
+        pchMessageStart[2] = 0xa2;
+        pchMessageStart[3] = 0xb1;
         nDefaultPort = 27433;
         nPruneAfterHeight = 100000;
 

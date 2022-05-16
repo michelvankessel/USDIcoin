@@ -125,7 +125,7 @@ public:
         consensus.nCoinbaseMaturity = 240;
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000074c206505560020");
+        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000000000100001");
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -139,7 +139,7 @@ public:
         nDefaultPort = 7433;
         nPruneAfterHeight = 100000;
 
-        genesis = CreateGenesisBlock(1647444600, 659356, 0x1e0fffff, 1, 0);
+        genesis = CreateGenesisBlock(1652716800, 419733890, 0x1d00ffff, 1, 0);
         consensus.hashGenesisBlock = genesis.GetHash();
         /* calculate main genesis block
         consensus.hashGenesisBlock = uint256S("0x00");
@@ -162,8 +162,8 @@ public:
             std::cout << "blockhash: " << genesis.GetHash().ToString().c_str() << "\n";
             std::cout << "merklehash: " << genesis.hashMerkleRoot.ToString().c_str() << "\n";
         }*/
-        assert(consensus.hashGenesisBlock == uint256S("0x000003fc616d45fe7cc75fb5c0bd0c67f88bdd12c7903e24821280fb53e5b36c"));
-        assert(genesis.hashMerkleRoot == uint256S("0x1d66701ab873d10f679daa90846e3fe1b2926fca03810a1472d2eb20e5b27bb3"));
+        assert(consensus.hashGenesisBlock == uint256S("0x000000003c008e29ee1fb22fc83668cec0ffbe99e67c97c3f4963b117e0922a5"));
+        assert(genesis.hashMerkleRoot == uint256S("0x10b0dac5b1a8dbc005a38e91d7712592e84f2662332306d6f54b3cbdf9294601"));
 
         vSeeds.push_back(CDNSSeedData("seed1.usdicoin.com", "seed1.usdicoin.com"));
         vSeeds.push_back(CDNSSeedData("seed2.usdicoin.com", "seed2.usdicoin.com"));
@@ -185,11 +185,11 @@ public:
 
         checkpointData = (CCheckpointData) {
                     boost::assign::map_list_of
-                    ( 1200, uint256S("0x5f38e6eebed3e44afdc6d254b26bf9a04ca852978b621810e119c36686a5bfec")), //Pre-mine ended
-                    1647530240, // * UNIX timestamp of last checkpoint block
-                    1459,    // * total number of transactions between genesis and last checkpoint
+                    ( 0, uint256S("0x000000003c008e29ee1fb22fc83668cec0ffbe99e67c97c3f4963b117e0922a5")),
+                    0, // * UNIX timestamp of last checkpoint block
+                    0,    // * total number of transactions between genesis and last checkpoint
                                 //   (the tx=... number in the SetBestChain debug.log lines)
-                    3900      // * estimated number of transactions per day after checkpoint
+                    0      // * estimated number of transactions per day after checkpoint
         };
     }
 };
@@ -242,7 +242,7 @@ public:
 
         nPruneAfterHeight = 100000;
 
-        genesis = CreateGenesisBlock(1647444600, 47633, 0x1f00ffff, 1, 0);
+        genesis = CreateGenesisBlock(1652716800, 254931, 0x1f00ffff, 1, 0);
         consensus.hashGenesisBlock = genesis.GetHash();
         /* calculate test genesis block
         consensus.hashGenesisBlock = uint256S("0x00");
@@ -265,8 +265,8 @@ public:
             std::cout << "blockhash: " << genesis.GetHash().ToString().c_str() << "\n";
             std::cout << "merklehash: " << genesis.hashMerkleRoot.ToString().c_str() << "\n";
         }*/
-        assert(consensus.hashGenesisBlock == uint256S("0x0000a740f3f54677ef7af918025cc44f38b79714079cb853dfa39d469bdaa207"));
-        assert(genesis.hashMerkleRoot == uint256S("0x1d66701ab873d10f679daa90846e3fe1b2926fca03810a1472d2eb20e5b27bb3"));
+        assert(consensus.hashGenesisBlock == uint256S("0x0000ab49a2600e19a2f42dd0cdff32350d8b919bf4ff65bc2e33db2b2c0aa22f"));
+        assert(genesis.hashMerkleRoot == uint256S("0x10b0dac5b1a8dbc005a38e91d7712592e84f2662332306d6f54b3cbdf9294601"));
 
         vFixedSeeds.clear();
         vSeeds.clear();
@@ -288,8 +288,8 @@ public:
 
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of
-            ( 0, uint256S("0x0000a740f3f54677ef7af918025cc44f38b79714079cb853dfa39d469bdaa207")),
-                    1647444600, // * UNIX timestamp of last checkpoint block
+            ( 0, uint256S("0x0000ab49a2600e19a2f42dd0cdff32350d8b919bf4ff65bc2e33db2b2c0aa22f")),
+                    0, // * UNIX timestamp of last checkpoint block
                     0,    // * total number of transactions between genesis and last checkpoint
                                 //   (the tx=... number in the SetBestChain debug.log lines)
                     0      // * estimated number of transactions per day after checkpoint
@@ -344,9 +344,9 @@ public:
         nDefaultPort = 27433;
         nPruneAfterHeight = 100000;
 
-	genesis = CreateGenesisBlock(1647421200, 132781, 0x1f00ffff, 1, 0);
+	genesis = CreateGenesisBlock(1652717000, 209997, 0x1f00ffff, 1, 0);
         consensus.hashGenesisBlock = genesis.GetHash();
-        /* calculate regtest genesis block
+        /*calculate regtest genesis block
         consensus.hashGenesisBlock = uint256S("0x00");
         if (true && (genesis.GetHash() != consensus.hashGenesisBlock)) {
 		std::cout << std::string("Calculating regtest genesis block...\n");
@@ -367,8 +367,8 @@ public:
             std::cout << "blockhash: " << genesis.GetHash().ToString().c_str() << "\n";
             std::cout << "merklehash: " << genesis.hashMerkleRoot.ToString().c_str() << "\n";
         }*/
-        assert(consensus.hashGenesisBlock == uint256S("0x00004beb7dc2b27e027858a1af9d9d5a80131a5f736633d1d0e9b6439c1dd3f3"));
-        assert(genesis.hashMerkleRoot == uint256S("0xff6d1cf5b6eb1555427893de3f0a558247bd44530888afcb06699bd5f99b9231"));
+        assert(consensus.hashGenesisBlock == uint256S("0x0000b54acc562d6df2698002da32fd6f5ae14fe89851ec172a03ce5db63c889e"));
+        assert(genesis.hashMerkleRoot == uint256S("0x14cb84f0b2d8bbf39caaa987c29788f3330bdb4ad615f18fd4c648b270f13f95"));
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
         vSeeds.clear();      //!< Regtest mode doesn't have any DNS seeds.

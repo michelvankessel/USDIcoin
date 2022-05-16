@@ -63,6 +63,10 @@
 #include "zmq/zmqnotificationinterface.h"
 #endif
 
+#ifdef USE_SSE2
+#include <crypto/scrypt.h>
+#endif
+
 using namespace std;
 
 bool fFeeEstimatesInitialized = false;
@@ -186,7 +190,7 @@ void Shutdown()
     /// for example if the data directory was found to be locked.
     /// Be sure that anything that writes files or flushes caches only does this if the respective
     /// module was initialized.
-    RenameThread("bitcoin-shutoff");
+    RenameThread("usdi-shutoff");
     mempool.AddTransactionsUpdated(1);
 
     StopHTTPRPC();
@@ -1323,6 +1327,7 @@ bool AppInit2(Config& config, boost::thread_group& threadGroup, CScheduler& sche
 
                 pblocktree = new CBlockTreeDB(nBlockTreeDBCache, false, fReindex);
                 pcoinsdbview = new CCoinsViewDB(nCoinDBCache, false, fReindex || fReindexChainState);
+
                 pcoinscatcher = new CCoinsViewErrorCatcher(pcoinsdbview);
                 pcoinsTip = new CCoinsViewCache(pcoinscatcher);
 

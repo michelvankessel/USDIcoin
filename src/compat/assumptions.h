@@ -14,7 +14,7 @@
 // Example(s): We use assert(...) extensively with the assumption of it never
 //             being a noop at runtime.
 #if defined(NDEBUG)
-# error "blackcoin cannot be compiled without assertions."
+# error "usdi cannot be compiled without assertions."
 #endif
 
 // Assumption: We assume a C++11 (ISO/IEC 14882:2011) compiler (minimum requirement).

@@ -63,10 +63,6 @@
 #include "zmq/zmqnotificationinterface.h"
 #endif
 
-#ifdef USE_SSE2
-#include <crypto/scrypt.h>
-#endif
-
 using namespace std;
 
 bool fFeeEstimatesInitialized = false;

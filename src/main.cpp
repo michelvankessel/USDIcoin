@@ -1746,16 +1746,14 @@ bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus
     return true;
 }
 
-CAmount GetProofOfWorkSubsidy()
+CAmount GetProofOfWorkSubsidy(int nHeight)
 {
-    int nBlockHeight = chainActive.Height() + 1;
-
-    if (nBlockHeight <= 500) 
-         return 10000 * COIN;
-    else if (nBlockHeight > 500 && nBlockHeight <=800)
-         return 69550000 * COIN;      
+    if (nHeight <= 500) 
+        return 10000 * COIN;
+    else if (nHeight > 500 && nHeight <=800)
+        return 69550000 * COIN;      
     else
-         return COIN * 1 / 20;
+        return COIN * 1 / 20;
 }
 
 CAmount GetProofOfStakeSubsidy()
@@ -2567,7 +2565,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     LogPrint("bench", "      - Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin) [%.2fs]\n", (unsigned)block.vtx.size(), 0.001 * (nTime3 - nTime2), 0.001 * (nTime3 - nTime2) / block.vtx.size(), nInputs <= 1 ? 0 : 0.001 * (nTime3 - nTime2) / (nInputs-1), nTimeConnect * 0.000001);
 
     if (block.IsProofOfWork()) {
-            CAmount blockReward = nFees + GetProofOfWorkSubsidy();
+            CAmount blockReward = nFees + GetProofOfWorkSubsidy(pindex->nHeight);
             if (block.vtx[0].GetValueOut() > blockReward)
                 return state.DoS(100,
                                  error("ConnectBlock(): coinbase pays too much (actual=%d vs limit=%d)",

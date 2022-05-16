@@ -1,4 +1,4 @@
-Blackcoin More
+USDI
 =============
 
 Setup

@@ -52,9 +52,9 @@ Possible options, which apply to each individual test run:
 
 ```
   -h, --help            show this help message and exit
-  --nocleanup           Leave blackmoreds and test.* datadir on exit or error
-  --noshutdown          Don't stop blackmoreds after the test execution
-  --srcdir=SRCDIR       Source directory containing blackmored/blackmore-cli
+  --nocleanup           Leave usdids and test.* datadir on exit or error
+  --noshutdown          Don't stop usdids after the test execution
+  --srcdir=SRCDIR       Source directory containing usdid/usdi-cli
                         (default: ../../src)
   --tmpdir=TMPDIR       Root directory for datadirs
   --tracerpc            Print out all RPC calls as they are made
@@ -79,7 +79,7 @@ to recover with:
 
 ```bash
 rm -rf cache
-killall blackmored
+killall usdid
 ```
 
 Writing tests

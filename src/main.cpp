@@ -1217,7 +1217,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
     if (pfMissingInputs)
         *pfMissingInputs = false;
 
-    // Blackcoin: Limit dust
+    // Limit dust
     int dust_tx_count = 0;
     CAmount min_dust = 100000;
     BOOST_FOREACH(const CTxOut& txout, tx.vout) {

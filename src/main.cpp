@@ -1745,13 +1745,17 @@ bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus
                 pindex->ToString(), pindex->GetBlockPos().ToString());
     return true;
 }
-
+// pre-mine 800 blocks to get 20 556 330 000 USDI
+// continue PoW for another 400 blocks at 0.05 USDI reward. 
+// PoS will start at block 1201 at 0.05 USDI reward
 CAmount GetProofOfWorkSubsidy(int nHeight)
 {
     if (nHeight <= 500) 
-        return 10000 * COIN;
-    else if (nHeight > 500 && nHeight <=800)
-        return 69550000 * COIN;      
+        return 10000 * COIN; // 5 000 000 USDI
+    else if (nHeight > 500 && nHeight <=750)
+        return 69550000 * COIN; // 17 387 500 000 USDI
+    else if (nHeight > 750 && nHeight <=800)
+        return 63276600 * COIN; // 3 163 830 000 USDI
     else
         return COIN * 1 / 20;
 }

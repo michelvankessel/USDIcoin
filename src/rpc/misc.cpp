@@ -180,8 +180,8 @@ UniValue validateaddress(const UniValue& params, bool fHelp)
             "  \"hdmasterkeyid\" : \"<hash160>\" (string, optional) The Hash160 of the HD master pubkey\n"
             "}\n"
             "\nExamples:\n"
-            + HelpExampleCli("validateaddress", "\"BC53sDtweXF9YFYKY1AkEbY2FBiNBrJpXX\"")
-            + HelpExampleRpc("validateaddress", "\"BC53sDtweXF9YFYKY1AkEbY2FBiNBrJpXX\"")
+            + HelpExampleCli("validateaddress", "\"UNyaASoZC8BVhagtoUSzKV2q6xaxhbWvaE\"")
+            + HelpExampleRpc("validateaddress", "\"UNyaASoZC8BVhagtoUSzKV2q6xaxhbWvaE\"")
         );
 
 #ifdef ENABLE_WALLET
@@ -320,9 +320,9 @@ UniValue createmultisig(const UniValue& params, bool fHelp)
 
             "\nExamples:\n"
             "\nCreate a multisig address from 2 addresses\n"
-            + HelpExampleCli("createmultisig", "2 \"[\\\"BC53sDtweXF9YFYKY1AkEbY2FBiNBrJpXX\\\",\\\"BRAVMXPsjszJrG3USfk78zL7qfhoRYfvdk\\\"]\"") +
+            + HelpExampleCli("createmultisig", "2 \"[\\\"UNyaASoZC8BVhagtoUSzKV2q6xaxhbWvaE\\\",\\\"UeResNv3LyMBAaeAX4haaePUsdHi8ji4Qw\\\"]\"") +
             "\nAs a json rpc call\n"
-            + HelpExampleRpc("createmultisig", "2, \"[\\\"BC53sDtweXF9YFYKY1AkEbY2FBiNBrJpXX\\\",\\\"BRAVMXPsjszJrG3USfk78zL7qfhoRYfvdk\\\"]\"")
+            + HelpExampleRpc("createmultisig", "2, \"[\\\"UNyaASoZC8BVhagtoUSzKV2q6xaxhbWvaE\\\",\\\"UeResNv3LyMBAaeAX4haaePUsdHi8ji4Qw\\\"]\"")
         ;
         throw runtime_error(msg);
     }
@@ -354,11 +354,11 @@ UniValue verifymessage(const UniValue& params, bool fHelp)
             "\nUnlock the wallet for 30 seconds\n"
             + HelpExampleCli("walletpassphrase", "\"mypassphrase\" 30") +
             "\nCreate the signature\n"
-            + HelpExampleCli("signmessage", "\"BC53sDtweXF9YFYKY1AkEbY2FBiNBrJpXX\" \"my message\"") +
+            + HelpExampleCli("signmessage", "\"UeResNv3LyMBAaeAX4haaePUsdHi8ji4Qw\" \"my message\"") +
             "\nVerify the signature\n"
-            + HelpExampleCli("verifymessage", "\"BRAVMXPsjszJrG3USfk78zL7qfhoRYfvdk\" \"signature\" \"my message\"") +
+            + HelpExampleCli("verifymessage", "\"UeResNv3LyMBAaeAX4haaePUsdHi8ji4Qw\" \"signature\" \"my message\"") +
             "\nAs json rpc\n"
-            + HelpExampleRpc("verifymessage", "\"BRAVMXPsjszJrG3USfk78zL7qfhoRYfvdk\", \"signature\", \"my message\"")
+            + HelpExampleRpc("verifymessage", "\"UeResNv3LyMBAaeAX4haaePUsdHi8ji4Qw\", \"signature\", \"my message\"")
         );
 
     LOCK(cs_main);
@@ -409,7 +409,7 @@ UniValue signmessagewithprivkey(const UniValue& params, bool fHelp)
             "\nCreate the signature\n"
             + HelpExampleCli("signmessagewithprivkey", "\"privkey\" \"my message\"") +
             "\nVerify the signature\n"
-            + HelpExampleCli("verifymessage", "\"BRAVMXPsjszJrG3USfk78zL7qfhoRYfvdk\" \"signature\" \"my message\"") +
+            + HelpExampleCli("verifymessage", "\"UeResNv3LyMBAaeAX4haaePUsdHi8ji4Qw\" \"signature\" \"my message\"") +
             "\nAs json rpc\n"
             + HelpExampleRpc("signmessagewithprivkey", "\"privkey\", \"my message\"")
         );

@@ -6,16 +6,15 @@
 #define BITCOIN_DBWRAPPER_H
 
 #include "clientversion.h"
+#include "fs.h"
 #include "serialize.h"
 #include "streams.h"
 #include "util.h"
 #include "utilstrencodings.h"
 #include "version.h"
 
-#include <boost/filesystem/path.hpp>
-
-#include <leveldb/include/leveldb/db.h>
-#include <leveldb/include/leveldb/write_batch.h>
+#include <leveldb/db.h>
+#include <leveldb/write_batch.h>
 
 class dbwrapper_error : public std::runtime_error
 {
@@ -192,8 +191,10 @@ public:
      * @param[in] fWipe         If true, remove all existing data.
      * @param[in] obfuscate     If true, store data obfuscated via simple XOR. If false, XOR
      *                          with a zero'd byte array.
+     * @param[in] compression   Enable snappy compression for the database
+     * @param[in] maxOpenFiles  The maximum number of open files for the database
      */
-    CDBWrapper(const boost::filesystem::path& path, size_t nCacheSize, bool fMemory = false, bool fWipe = false, bool obfuscate = false);
+    CDBWrapper(const fs::path& path, size_t nCacheSize, bool fMemory = false, bool fWipe = false, bool obfuscate = false, bool compression = false, int maxOpenFiles = 64);
     ~CDBWrapper();
 
     template <typename K, typename V>

@@ -9,7 +9,9 @@
 #include "coins.h"
 #include "dbwrapper.h"
 #include "chain.h"
+#include "main.h"
 
+#include <functional>
 #include <map>
 #include <string>
 #include <utility>
@@ -21,6 +23,12 @@ class CBlockIndex;
 class CCoinsViewDBCursor;
 class uint256;
 
+//! Compensate for extra memory peak (x1.5-x1.9) at flush time.
+static constexpr int DB_PEAK_USAGE_FACTOR = 2;
+//! No need to periodic flush if at least this much space still available.
+static constexpr int MAX_BLOCK_COINSDB_USAGE = 200 * DB_PEAK_USAGE_FACTOR;
+//! Always periodic flush if less than this much space still available.
+static constexpr int MIN_BLOCK_COINSDB_USAGE = 50 * DB_PEAK_USAGE_FACTOR;
 //! -dbcache default (MiB)
 static const int64_t nDefaultDbCache = 450;
 //! max. -dbcache (MiB)
@@ -102,7 +110,7 @@ private:
 class CBlockTreeDB : public CDBWrapper
 {
 public:
-    CBlockTreeDB(size_t nCacheSize, bool fMemory = false, bool fWipe = false);
+    CBlockTreeDB(size_t nCacheSize, bool fMemory = false, bool fWipe = false, bool compression = true, int maxOpenFiles = 1000);
 private:
     CBlockTreeDB(const CBlockTreeDB&);
     void operator=(const CBlockTreeDB&);

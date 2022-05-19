@@ -394,13 +394,11 @@ void CoinControlDialog::viewItemChanged(QTreeWidgetItem* item, int column)
 
     // TODO: Remove this temporary qt5 fix after Qt5.3 and Qt5.4 are no longer used.
     //       Fixed in Qt5.5 and above: https://bugreports.qt.io/browse/QTBUG-43473
-#if QT_VERSION >= 0x050000
     else if (column == COLUMN_CHECKBOX && item->childCount() > 0)
     {
         if (item->checkState(COLUMN_CHECKBOX) == Qt::PartiallyChecked && item->child(0)->checkState(COLUMN_CHECKBOX) == Qt::PartiallyChecked)
             item->setCheckState(COLUMN_CHECKBOX, Qt::Checked);
     }
-#endif
 }
 
 // shows count of locked unspent outputs
@@ -425,7 +423,7 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
     CAmount nPayAmount = 0;
     bool fDust = false;
     CMutableTransaction txDummy;
-    Q_FOREACH(const CAmount &amount, CoinControlDialog::payAmounts)
+    for(const CAmount &amount: CoinControlDialog::payAmounts)
     {
         nPayAmount += amount;
 
@@ -455,7 +453,7 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
     coinControl->ListSelected(vCoinControl);
     model->getOutputs(vCoinControl, vOutputs);
 
-    BOOST_FOREACH(const COutput& out, vOutputs) {
+    for(const COutput& out: vOutputs) {
         // unselect already spent, very unlikely scenario, this could happen
         // when selected are spent elsewhere, like rpc or another computer
         uint256 txhash = out.tx->GetHash();
@@ -636,7 +634,7 @@ void CoinControlDialog::updateView()
     std::map<QString, std::vector<COutput> > mapCoins;
     model->listCoins(mapCoins);
 
-    BOOST_FOREACH(const PAIRTYPE(QString, std::vector<COutput>)& coins, mapCoins) {
+    for(const std::pair<QString, std::vector<COutput>>& coins: mapCoins) {
         CCoinControlWidgetItem *itemWalletAddress = new CCoinControlWidgetItem();
         itemWalletAddress->setCheckState(COLUMN_CHECKBOX, Qt::Unchecked);
         QString sWalletAddress = coins.first;
@@ -661,7 +659,7 @@ void CoinControlDialog::updateView()
 
         CAmount nSum = 0;
         int nChildren = 0;
-        BOOST_FOREACH(const COutput& out, coins.second) {
+        for(const COutput& out: coins.second) {
             nSum += out.tx->vout[out.i].nValue;
             nChildren++;
 

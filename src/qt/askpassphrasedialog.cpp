@@ -19,6 +19,7 @@
 #include <QPushButton>
 
 extern bool fWalletUnlockStakingOnly;
+
 AskPassphraseDialog::AskPassphraseDialog(Mode mode, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AskPassphraseDialog),
@@ -47,7 +48,7 @@ AskPassphraseDialog::AskPassphraseDialog(Mode mode, QWidget *parent) :
     switch(mode)
     {
         case Encrypt: // Ask passphrase x2
-            ui->warningLabel->setText(tr("Enter the new passphrase to the wallet.<br/>Please use a passphrase of <b>ten or more random characters</b>, or <b>eight or more words</b>."));
+            ui->warningLabel->setText(tr("Enter the new passphrase for the wallet.<br/>Please use a passphrase of <b>ten or more random characters</b>, or <b>eight or more words</b> for better security."));
             ui->passLabel1->hide();
             ui->passEdit1->hide();
             setWindowTitle(tr("Encrypt wallet"));

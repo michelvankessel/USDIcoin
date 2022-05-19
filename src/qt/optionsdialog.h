@@ -47,9 +47,9 @@ private Q_SLOTS:
     /* set OK button state (enabled / disabled) */
     void setOkButtonState(bool fState);
     void on_resetButton_clicked();
-    void on_openBitcoinConfButton_clicked();
     void on_okButton_clicked();
     void on_cancelButton_clicked();
+    void on_openBitcoinConfButton_clicked();
     
     void on_hideTrayIcon_stateChanged(int fState);
 

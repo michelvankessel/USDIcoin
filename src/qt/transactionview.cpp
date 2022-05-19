@@ -94,15 +94,11 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     hlayout->addWidget(typeWidget);
 
     addressWidget = new QLineEdit(this);
-#if QT_VERSION >= 0x040700
     addressWidget->setPlaceholderText(tr("Enter address or label to search"));
-#endif
     hlayout->addWidget(addressWidget);
 
     amountWidget = new QLineEdit(this);
-#if QT_VERSION >= 0x040700
     amountWidget->setPlaceholderText(tr("Min amount"));
-#endif
     if (platformStyle->getUseExtraSpacing()) {
         amountWidget->setFixedWidth(97);
     } else {
@@ -332,7 +328,7 @@ void TransactionView::exportClicked()
     // CSV is currently the only supported format
     QString filename = GUIUtil::getSaveFileName(this,
         tr("Export Transaction History"), QString(),
-        tr("Comma separated file (*.csv)"), NULL);
+        tr("Comma separated file (*.csv)"), nullptr);
 
     if (filename.isNull())
         return;

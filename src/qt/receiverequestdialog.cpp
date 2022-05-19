@@ -21,9 +21,6 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QPixmap>
-#if QT_VERSION < 0x050000
-#include <QUrl>
-#endif
 
 #if defined(HAVE_CONFIG_H)
 #include <config/bitcoin-config.h> /* for USE_QRCODE */
@@ -72,7 +69,7 @@ void QRImageWidget::saveImage()
 {
     if(!pixmap())
         return;
-    QString fn = GUIUtil::getSaveFileName(this, tr("Save QR Code"), QString(), tr("PNG Image (*.png)"), NULL);
+    QString fn = GUIUtil::getSaveFileName(this, tr("Save QR Code"), QString(), tr("PNG Image (*.png)"), nullptr);
     if (!fn.isEmpty())
     {
         exportImage().save(fn);

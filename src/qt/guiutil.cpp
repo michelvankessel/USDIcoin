@@ -34,16 +34,11 @@
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
-#include "shellapi.h"
-#include "shlobj.h"
-#include "shlwapi.h"
+#include <shellapi.h>
+#include <shlobj.h>
+#include <shlwapi.h>
 #endif
 
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
-#if BOOST_FILESYSTEM_VERSION >= 3
-#include <boost/filesystem/detail/utf8_codecvt_facet.hpp>
-#endif
 #include <boost/scoped_array.hpp>
 
 #include <QAbstractItemView>
@@ -55,28 +50,14 @@
 #include <QDoubleValidator>
 #include <QFileDialog>
 #include <QFont>
+#include <QFontDatabase>
 #include <QLineEdit>
 #include <QSettings>
 #include <QTextDocument> // for Qt::mightBeRichText
 #include <QThread>
-
-#if QT_VERSION < 0x050000
-#include <QUrl>
-#else
 #include <QUrlQuery>
-#endif
-
-#if QT_VERSION >= 0x50200
-#include <QFontDatabase>
-#endif
-
-#if BOOST_FILESYSTEM_VERSION >= 3
-static boost::filesystem::detail::utf8_codecvt_facet utf8;
-#endif
 
 #if defined(Q_OS_MAC)
-
-#include <QProcess>
 extern double NSAppKitVersionNumber;
 #if !defined(NSAppKitVersionNumber10_8)
 #define NSAppKitVersionNumber10_8 1187
@@ -84,7 +65,6 @@ extern double NSAppKitVersionNumber;
 #if !defined(NSAppKitVersionNumber10_9)
 #define NSAppKitVersionNumber10_9 1265
 #endif
-void ForceActivation();
 #endif
 
 namespace GUIUtil {
@@ -101,17 +81,7 @@ QString dateTimeStr(qint64 nTime)
 
 QFont fixedPitchFont()
 {
-#if QT_VERSION >= 0x50200
     return QFontDatabase::systemFont(QFontDatabase::FixedFont);
-#else
-    QFont font("Monospace");
-#if QT_VERSION >= 0x040800
-    font.setStyleHint(QFont::Monospace);
-#else
-    font.setStyleHint(QFont::TypeWriter);
-#endif
-    return font;
-#endif
 }
 
 static std::string MakeAddrInvalid(std::string addr)
@@ -147,12 +117,10 @@ void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent)
 
     widget->setFont(fixedPitchFont());
     const CChainParams &params = Params();
-#if QT_VERSION >= 0x040700
     // We don't want translators to use own addresses in translations
     // and this is the only place, where this address is supplied.
-    widget->setPlaceholderText(QObject::tr("Enter a Bitcoin address (e.g. %1)")
-                                   .arg(QString::fromStdString(DummyAddress(params, GetConfig()))));
-#endif
+    widget->setPlaceholderText(QObject::tr("Enter a Bitcoin address (e.g. %1)").arg(
+        QString::fromStdString(DummyAddress(params, GetConfig()))));
     widget->setValidator(new BitcoinAddressEntryValidator(params.CashAddrPrefix(), parent));
     widget->setCheckValidator(new BitcoinAddressCheckValidator(parent));
 }
@@ -212,12 +180,8 @@ bool parseBitcoinURI(const QString &scheme, const QUrl &uri, SendCoinsRecipient 
     }
     rv.amount = 0;
 
-#if QT_VERSION < 0x050000
-    QList<QPair<QString, QString> > items = uri.queryItems();
-#else
     QUrlQuery uriQuery(uri);
     QList<QPair<QString, QString> > items = uriQuery.queryItems();
-#endif
     for (QList<QPair<QString, QString> >::iterator i = items.begin(); i != items.end(); i++)
     {
         bool fShouldReturnFalse = false;
@@ -252,7 +216,7 @@ bool parseBitcoinURI(const QString &scheme, const QUrl &uri, SendCoinsRecipient 
         if (fShouldReturnFalse)
             return false;
     }
-    if (out)
+    if(out)
     {
         *out = rv;
     }
@@ -316,11 +280,7 @@ bool isDust(const QString& address, const CAmount& amount)
 
 QString HtmlEscape(const QString& str, bool fMultiLine)
 {
-#if QT_VERSION < 0x050000
-    QString escaped = Qt::escape(str);
-#else
     QString escaped = str.toHtmlEscaped();
-#endif
     if(fMultiLine)
     {
         escaped = escaped.replace("\n", "<br>\n");
@@ -367,11 +327,7 @@ QString getSaveFileName(QWidget *parent, const QString &caption, const QString &
     QString myDir;
     if(dir.isEmpty()) // Default to user documents location
     {
-#if QT_VERSION < 0x050000
-        myDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
-#else
         myDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-#endif
     }
     else
     {
@@ -417,11 +373,7 @@ QString getOpenFileName(QWidget *parent, const QString &caption, const QString &
     QString myDir;
     if(dir.isEmpty()) // Default to user documents location
     {
-#if QT_VERSION < 0x050000
-        myDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
-#else
         myDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-#endif
     }
     else
     {
@@ -474,63 +426,31 @@ bool isObscured(QWidget *w)
 
 void openDebugLogfile()
 {
-    boost::filesystem::path pathDebug = GetDataDir() / "debug.log";
+    fs::path pathDebug = GetDataDir() / "debug.log";
 
     /* Open debug.log with the associated application */
-    if (boost::filesystem::exists(pathDebug))
+    if (fs::exists(pathDebug))
         QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathDebug)));
 }
 
-bool openBitcoinConf()
+void openBitcoinConf()
 {
-    boost::filesystem::path pathConfig = GetConfigFile();
+     fs::path pathConfig = GetConfigFile();
 
-    /* Create the file */
-    boost::filesystem::ofstream configFile(pathConfig, std::ios_base::app);
-    
-    if (!configFile.good())
-        return false;
-    
-    configFile.close();
-    
-    /* Open bitcoin.conf with the associated application */
-    return QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathConfig)));
+     /* Open usdi.conf with the associated application */
+     if (fs::exists(pathConfig))
+         QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathConfig)));
 }
 
 void SubstituteFonts(const QString& language)
 {
-#if defined(Q_OS_MAC)
-// Background:
-// OSX's default font changed in 10.9 and Qt is unable to find it with its
-// usual fallback methods when building against the 10.7 sdk or lower.
-// The 10.8 SDK added a function to let it find the correct fallback font.
-// If this fallback is not properly loaded, some characters may fail to
-// render correctly.
-//
-// The same thing happened with 10.10. .Helvetica Neue DeskInterface is now default.
-//
-// Solution: If building with the 10.7 SDK or lower and the user's platform
-// is 10.9 or higher at runtime, substitute the correct font. This needs to
-// happen before the QApplication is created.
-#if defined(MAC_OS_X_VERSION_MAX_ALLOWED) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
-    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_8)
-    {
-        if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_9)
-            /* On a 10.9 - 10.9.x system */
-            QFont::insertSubstitution(".Lucida Grande UI", "Lucida Grande");
-        else
-        {
-            /* 10.10 or later system */
-            if (language == "zh_CN" || language == "zh_TW" || language == "zh_HK") // traditional or simplified Chinese
-              QFont::insertSubstitution(".Helvetica Neue DeskInterface", "Heiti SC");
-            else if (language == "ja") // Japanesee
-              QFont::insertSubstitution(".Helvetica Neue DeskInterface", "Songti SC");
-            else
-              QFont::insertSubstitution(".Helvetica Neue DeskInterface", "Lucida Grande");
-        }
-    }
-#endif
-#endif
+    /* 10.10 or later system */
+    if (language == "zh_CN" || language == "zh_TW" || language == "zh_HK") // traditional or simplified Chinese
+        QFont::insertSubstitution(".Helvetica Neue DeskInterface", "Heiti SC");
+    else if (language == "ja") // Japanesee
+        QFont::insertSubstitution(".Helvetica Neue DeskInterface", "Songti SC");
+    else
+        QFont::insertSubstitution(".Helvetica Neue DeskInterface", "Lucida Grande");
 }
 
 ToolTipToRichTextFilter::ToolTipToRichTextFilter(int size_threshold, QObject *parent) :
@@ -575,11 +495,7 @@ void TableViewLastColumnResizingFixer::disconnectViewHeadersSignals()
 // Refactored here for readability.
 void TableViewLastColumnResizingFixer::setViewHeaderResizeMode(int logicalIndex, QHeaderView::ResizeMode resizeMode)
 {
-#if QT_VERSION < 0x050000
-    tableView->horizontalHeader()->setResizeMode(logicalIndex, resizeMode);
-#else
     tableView->horizontalHeader()->setSectionResizeMode(logicalIndex, resizeMode);
-#endif
 }
 
 void TableViewLastColumnResizingFixer::resizeColumn(int nColumnIndex, int width)
@@ -677,34 +593,34 @@ TableViewLastColumnResizingFixer::TableViewLastColumnResizingFixer(QTableView* t
 }
 
 #ifdef WIN32
-boost::filesystem::path static StartupShortcutPath()
+fs::path static StartupShortcutPath()
 {
     std::string chain = ChainNameFromCommandLine();
     if (chain == CBaseChainParams::MAIN)
-        return GetSpecialFolderPath(CSIDL_STARTUP) / "Bitcoin.lnk";
+        return GetSpecialFolderPath(CSIDL_STARTUP) / "USDI.lnk";
     if (chain == CBaseChainParams::TESTNET) // Remove this special case when CBaseChainParams::TESTNET = "testnet4"
-        return GetSpecialFolderPath(CSIDL_STARTUP) / "Bitcoin (testnet).lnk";
-    return GetSpecialFolderPath(CSIDL_STARTUP) / strprintf("Bitcoin (%s).lnk", chain);
+        return GetSpecialFolderPath(CSIDL_STARTUP) / "USDI (testnet).lnk";
+    return GetSpecialFolderPath(CSIDL_STARTUP) / strprintf("USDI (%s).lnk", chain);
 }
 
 bool GetStartOnSystemStartup()
 {
-    // check for Bitcoin*.lnk
-    return boost::filesystem::exists(StartupShortcutPath());
+    // check for USDI*.lnk
+    return fs::exists(StartupShortcutPath());
 }
 
 bool SetStartOnSystemStartup(bool fAutoStart)
 {
     // If the shortcut exists already, remove it for updating
-    boost::filesystem::remove(StartupShortcutPath());
+    fs::remove(StartupShortcutPath());
 
     if (fAutoStart)
     {
         CoInitialize(NULL);
 
         // Get a pointer to the IShellLink interface.
-        IShellLink* psl = NULL;
-        HRESULT hres = CoCreateInstance(CLSID_ShellLink, NULL,
+        IShellLink* psl = nullptr;
+        HRESULT hres = CoCreateInstance(CLSID_ShellLink, nullptr,
             CLSCTX_INPROC_SERVER, IID_IShellLink,
             reinterpret_cast<void**>(&psl));
 
@@ -740,7 +656,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
 
             // Query IShellLink for the IPersistFile interface for
             // saving the shortcut in persistent storage.
-            IPersistFile* ppf = NULL;
+            IPersistFile* ppf = nullptr;
             hres = psl->QueryInterface(IID_IPersistFile, reinterpret_cast<void**>(&ppf));
             if (SUCCEEDED(hres))
             {
@@ -766,7 +682,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
 // Follow the Desktop Application Autostart Spec:
 // http://standards.freedesktop.org/autostart-spec/autostart-spec-latest.html
 
-boost::filesystem::path static GetAutostartDir()
+fs::path static GetAutostartDir()
 {
     namespace fs = boost::filesystem;
 
@@ -777,7 +693,7 @@ boost::filesystem::path static GetAutostartDir()
     return fs::path();
 }
 
-boost::filesystem::path static GetAutostartFilePath()
+fs::path static GetAutostartFilePath()
 {
     std::string chain = ChainNameFromCommandLine();
     if (chain == CBaseChainParams::MAIN)
@@ -787,7 +703,7 @@ boost::filesystem::path static GetAutostartFilePath()
 
 bool GetStartOnSystemStartup()
 {
-    boost::filesystem::ifstream optionFile(GetAutostartFilePath());
+    fs::ifstream optionFile(GetAutostartFilePath());
     if (!optionFile.good())
         return false;
     // Scan through file for "Hidden=true":
@@ -807,7 +723,7 @@ bool GetStartOnSystemStartup()
 bool SetStartOnSystemStartup(bool fAutoStart)
 {
     if (!fAutoStart)
-        boost::filesystem::remove(GetAutostartFilePath());
+        fs::remove(GetAutostartFilePath());
     else
     {
         char pszExePath[MAX_PATH+1];
@@ -815,19 +731,19 @@ bool SetStartOnSystemStartup(bool fAutoStart)
         if (readlink("/proc/self/exe", pszExePath, sizeof(pszExePath)-1) == -1)
             return false;
 
-        boost::filesystem::create_directories(GetAutostartDir());
+        fs::create_directories(GetAutostartDir());
 
-        boost::filesystem::ofstream optionFile(GetAutostartFilePath(), std::ios_base::out|std::ios_base::trunc);
+        fs::ofstream optionFile(GetAutostartFilePath(), std::ios_base::out|std::ios_base::trunc);
         if (!optionFile.good())
             return false;
         std::string chain = ChainNameFromCommandLine();
-        // Write a bitcoin.desktop file to the autostart directory:
+        // Write a usdi.desktop file to the autostart directory:
         optionFile << "[Desktop Entry]\n";
         optionFile << "Type=Application\n";
         if (chain == CBaseChainParams::MAIN)
-            optionFile << "Name=Bitcoin\n";
+            optionFile << "Name=USDI\n";
         else
-            optionFile << strprintf("Name=Bitcoin (%s)\n", chain);
+            optionFile << strprintf("Name=USDI (%s)\n", chain);
         optionFile << "Exec=" << pszExePath << strprintf(" -min -testnet=%d -regtest=%d\n", GetBoolArg("-testnet", false), GetBoolArg("-regtest", false));
         optionFile << "Terminal=false\n";
         optionFile << "Hidden=false\n";
@@ -838,8 +754,6 @@ bool SetStartOnSystemStartup(bool fAutoStart)
 
 
 #elif defined(Q_OS_MAC)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 // based on: https://github.com/Mozketo/LaunchAtLoginController/blob/master/LaunchAtLoginController.m
 
 #include <CoreFoundation/CoreFoundation.h>
@@ -848,9 +762,9 @@ bool SetStartOnSystemStartup(bool fAutoStart)
 LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl);
 LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl)
 {
-    // loop through the list of startup items and try to find the bitcoin app
-    CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(list, NULL);
-    if (listSnapshot == NULL) {
+    // loop through the list of startup items and try to find the usdi app
+    CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(list, nullptr);
+    if (listSnapshot == nullptr) {
         return nullptr;
     }
     
@@ -858,17 +772,17 @@ LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef
     for(int i = 0; i < CFArrayGetCount(listSnapshot); i++) {
         LSSharedFileListItemRef item = (LSSharedFileListItemRef)CFArrayGetValueAtIndex(listSnapshot, i);
         UInt32 resolutionFlags = kLSSharedFileListNoUserInteraction | kLSSharedFileListDoNotMountVolumes;
-        CFURLRef currentItemURL = NULL;
+        CFURLRef currentItemURL = nullptr;
 
 #if defined(MAC_OS_X_VERSION_MAX_ALLOWED) && MAC_OS_X_VERSION_MAX_ALLOWED >= 10100
     if(&LSSharedFileListItemCopyResolvedURL)
-        currentItemURL = LSSharedFileListItemCopyResolvedURL(item, resolutionFlags, NULL);
+        currentItemURL = LSSharedFileListItemCopyResolvedURL(item, resolutionFlags, nullptr);
 #if defined(MAC_OS_X_VERSION_MIN_REQUIRED) && MAC_OS_X_VERSION_MIN_REQUIRED < 10100
     else
-        LSSharedFileListItemResolve(item, resolutionFlags, &currentItemURL, NULL);
+        LSSharedFileListItemResolve(item, resolutionFlags, &currentItemURL, nullptr);
 #endif
 #else
-    LSSharedFileListItemResolve(item, resolutionFlags, &currentItemURL, NULL);
+    LSSharedFileListItemResolve(item, resolutionFlags, &currentItemURL, nullptr);
 #endif
 
         if(currentItemURL) {
@@ -883,7 +797,7 @@ LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef
     }
 
     CFRelease(listSnapshot);
-    return NULL;
+    return nullptr;
 }
 
 bool GetStartOnSystemStartup()
@@ -913,8 +827,8 @@ bool SetStartOnSystemStartup(bool fAutoStart)
     LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, bitcoinAppUrl);
 
     if(fAutoStart && !foundItem) {
-        // add bitcoin app to startup item list
-        LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemBeforeFirst, NULL, NULL, bitcoinAppUrl, NULL, NULL);
+        // add usdi app to startup item list
+        LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemBeforeFirst, nullptr, nullptr, bitcoinAppUrl, nullptr, nullptr);
     }
     else if(!fAutoStart && foundItem) {
         // remove item
@@ -924,7 +838,6 @@ bool SetStartOnSystemStartup(bool fAutoStart)
     CFRelease(bitcoinAppUrl);
     return true;
 }
-#pragma GCC diagnostic pop
 #else
 
 bool GetStartOnSystemStartup() { return false; }
@@ -964,28 +877,15 @@ void setClipboard(const QString& str)
     QApplication::clipboard()->setText(str, QClipboard::Selection);
 }
 
-#if BOOST_FILESYSTEM_VERSION >= 3
-boost::filesystem::path qstringToBoostPath(const QString &path)
+fs::path qstringToBoostPath(const QString &path)
 {
-    return boost::filesystem::path(path.toStdString(), utf8);
+    return fs::path(path.toStdString());
 }
 
-QString boostPathToQString(const boost::filesystem::path &path)
-{
-    return QString::fromStdString(path.string(utf8));
-}
-#else
-#warning Conversion between boost path and QString can use invalid character encoding with boost_filesystem v2 and older
-boost::filesystem::path qstringToBoostPath(const QString &path)
-{
-    return boost::filesystem::path(path.toStdString());
-}
-
-QString boostPathToQString(const boost::filesystem::path &path)
+QString boostPathToQString(const fs::path &path)
 {
     return QString::fromStdString(path.string());
 }
-#endif
 
 QString formatDurationStr(int secs)
 {
@@ -1059,11 +959,11 @@ QString formatNiceTimeOffset(qint64 secs)
     const int YEAR_IN_SECONDS = 31556952; // Average length of year in Gregorian calendar
     if(secs < 60)
     {
-        timeBehindText = QObject::tr("%n seconds(s)","",secs);
+        timeBehindText = QObject::tr("%n second(s)","",secs);
     }
     else if(secs < 2*HOUR_IN_SECONDS)
     {
-        timeBehindText = QObject::tr("%n minutes(s)","",secs/60);
+        timeBehindText = QObject::tr("%n minute(s)","",secs/60);
     }
     else if(secs < 2*DAY_IN_SECONDS)
     {
@@ -1085,4 +985,15 @@ QString formatNiceTimeOffset(qint64 secs)
     }
     return timeBehindText;
 }
+
+void ClickableLabel::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_EMIT clicked(event->pos());
+}
+
+void ClickableProgressBar::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_EMIT clicked(event->pos());
+}
+
 } // namespace GUIUtil

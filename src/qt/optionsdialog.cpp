@@ -84,7 +84,7 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
 
     ui->lang->setToolTip(ui->lang->toolTip().arg(tr(PACKAGE_NAME)));
     ui->lang->addItem(QString("(") + tr("default") + QString(")"), QVariant(""));
-    Q_FOREACH(const QString &langStr, translations.entryList())
+    for(const QString &langStr: translations.entryList())
     {
         QLocale locale(langStr);
 
@@ -208,8 +208,8 @@ void OptionsDialog::on_resetButton_clicked()
     {
         // confirmation dialog
         QMessageBox::StandardButton btnRetVal = QMessageBox::question(this, tr("Confirm options reset"),
-            tr("Client restart required to activate changes.") + "<br><br>" + tr("Client will be shut down. Do you want to proceed?"),
-            QMessageBox::Yes | QMessageBox::Cancel, QMessageBox::Cancel);
+                tr("Client restart required to activate changes.") + "<br><br>" + tr("Client will be shut down. Do you want to proceed?"),
+                QMessageBox::Yes | QMessageBox::Cancel, QMessageBox::Cancel);
 
         if(btnRetVal == QMessageBox::Cancel)
             return;
@@ -220,23 +220,23 @@ void OptionsDialog::on_resetButton_clicked()
     }
 }
 
-void OptionsDialog::on_openBitcoinConfButton_clicked()
-{
-    /* explain the purpose of the config file */
-    QMessageBox::information(this, tr("Configuration options"),
-        tr("The configuration file is used to specify advanced user options which override GUI settings. "
-           "Additionally, any command-line options will override this configuration file."));
 
-    /* show an error if there was some problem opening the file */
-    if (!GUIUtil::openBitcoinConf())
-        QMessageBox::critical(this, tr("Error"), tr("The configuration file could not be opened."));
-}
 
 void OptionsDialog::on_okButton_clicked()
 {
     mapper->submit();
     accept();
     updateDefaultProxyNets();
+
+    QMessageBox::information(this, tr("Changes saved"), tr("Changes have been saved!"));
+}
+
+void OptionsDialog::on_openBitcoinConfButton_clicked()
+{
+    QMessageBox::information(this, tr("Configuration options"),
+            tr("The configuration is used to specify advanced user options less any command-line or Qt options. "
+                "Any command-line options will override this configuration file."));
+    GUIUtil::openBitcoinConf();
 }
 
 void OptionsDialog::on_cancelButton_clicked()
@@ -319,7 +319,7 @@ void OptionsDialog::updateDefaultProxyNets()
 }
 
 ProxyAddressValidator::ProxyAddressValidator(QObject *parent) :
-QValidator(parent)
+    QValidator(parent)
 {
 }
 

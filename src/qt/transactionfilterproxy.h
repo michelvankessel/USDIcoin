@@ -16,11 +16,11 @@ class TransactionFilterProxy : public QSortFilterProxyModel
     Q_OBJECT
 
 public:
-    explicit TransactionFilterProxy(QObject *parent = 0);
+    explicit TransactionFilterProxy(QObject *parent = nullptr);
 
-    /** Earliest date that can be represented (far in the past) */
+    // Earliest date that can be represented (far in the past)
     static const QDateTime MIN_DATE;
-    /** Last date that can be represented (far in the future) */
+    // Last date that can be represented (far in the future)
     static const QDateTime MAX_DATE;
     /** Type filter bit field (all types) */
     static const quint32 ALL_TYPES = 0xFFFFFFFF;

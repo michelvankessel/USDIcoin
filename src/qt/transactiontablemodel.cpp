@@ -26,8 +26,6 @@
 #include <QIcon>
 #include <QList>
 
-#include <boost/foreach.hpp>
-
 // Amount column is right-aligned it contains numbers
 static int column_alignments[] = {
         Qt::AlignLeft|Qt::AlignVCenter, /* status */
@@ -54,7 +52,6 @@ struct TxLessThan
         return a < b.hash;
     }
 };
-
 // Private implementation
 class TransactionTablePriv
 {
@@ -145,7 +142,7 @@ public:
                 {
                     parent->beginInsertRows(QModelIndex(), lowerIndex, lowerIndex+toInsert.size()-1);
                     int insert_idx = lowerIndex;
-                    Q_FOREACH(const TransactionRecord &rec, toInsert)
+                    for(const TransactionRecord &rec: toInsert)
                     {
                         cachedWallet.insert(insert_idx, rec);
                         insert_idx += 1;
@@ -166,12 +163,8 @@ public:
             parent->endRemoveRows();
             break;
         case CT_UPDATED:
-            Q_EMIT parent->dataChanged(parent->index(lowerIndex, parent->Status), parent->index(upperIndex-1, parent->Amount));
-            break;
-        case CT_GOT_CONFLICT:
-            Q_EMIT parent->message(parent->tr("Conflict Received"),
-                                 parent->tr("WARNING: Transaction may never be confirmed. Its input was seen being spent by another transaction on the network."),
-                                 CClientUIInterface::MSG_WARNING);
+            // Miscellaneous updates -- nothing to do, status update will take care of this, and is only computed for
+            // visible transactions.
             break;
         }
     }
@@ -191,21 +184,20 @@ public:
             // stuck if the core is holding the locks for a longer time - for
             // example, during a wallet rescan.
             //
-            // If a status update is needed (blocks or conflicts came in since last check),
-            // update the status of this transaction from the wallet. Otherwise,
+            // If a status update is needed (blocks came in since last check),
+            //  update the status of this transaction from the wallet. Otherwise,
             // simply re-use the cached status.
             TRY_LOCK(cs_main, lockMain);
             if(lockMain)
             {
                 TRY_LOCK(wallet->cs_wallet, lockWallet);
-                if(lockWallet && rec->statusUpdateNeeded(wallet->nConflictsReceived))
+                if(lockWallet && rec->statusUpdateNeeded())
                 {
                     std::map<uint256, CWalletTx>::iterator mi = wallet->mapWallet.find(rec->hash);
 
                     if(mi != wallet->mapWallet.end())
                     {
                         rec->updateStatus(mi->second);
-                        rec->status.cur_num_conflicts = wallet->nConflictsReceived;
                     }
                 }
             }

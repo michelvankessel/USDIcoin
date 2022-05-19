@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-#include <boost/foreach.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 /* Return positive answer if transaction should be shown in list.
  */
@@ -48,7 +48,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
         //
         // Credit
         //
-        BOOST_FOREACH(const CTxOut& txout, wtx.vout)
+        for(const CTxOut& txout: wtx.vout)
         {
             isminetype mine = wallet->IsMine(txout);
             if(mine)
@@ -60,7 +60,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                 sub.involvesWatchAddress = mine & ISMINE_WATCH_ONLY;
                 if (ExtractDestination(txout.scriptPubKey, address) && IsMine(*wallet, address))
                 {
-                    // Received by Bitcoin Address
+                    // Received by USDI Address
                     sub.type = TransactionRecord::RecvWithAddress;
                     sub.address = EncodeDestination(address);
                 }
@@ -91,7 +91,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
     {
         bool involvesWatchAddress = false;
         isminetype fAllFromMe = ISMINE_SPENDABLE;
-        BOOST_FOREACH(const CTxIn& txin, wtx.vin)
+        for(const CTxIn& txin: wtx.vin)
         {
             isminetype mine = wallet->IsMine(txin);
             if(mine & ISMINE_WATCH_ONLY) involvesWatchAddress = true;
@@ -99,7 +99,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
         }
 
         isminetype fAllToMe = ISMINE_SPENDABLE;
-        BOOST_FOREACH(const CTxOut& txout, wtx.vout)
+        for(const CTxOut& txout: wtx.vout)
         {
             isminetype mine = wallet->IsMine(txout);
             if(mine & ISMINE_WATCH_ONLY) involvesWatchAddress = true;
@@ -181,7 +181,7 @@ void TransactionRecord::updateStatus(const CWalletTx &wtx)
     // Determine transaction status
 
     // Find the block the tx is in
-    CBlockIndex* pindex = NULL;
+    CBlockIndex* pindex = nullptr;
     BlockMap::iterator mi = mapBlockIndex.find(wtx.hashBlock);
     if (mi != mapBlockIndex.end())
         pindex = (*mi).second;
@@ -262,10 +262,10 @@ void TransactionRecord::updateStatus(const CWalletTx &wtx)
 
 }
 
-bool TransactionRecord::statusUpdateNeeded(int64_t nConflictsReceived)
+bool TransactionRecord::statusUpdateNeeded()
 {
     AssertLockHeld(cs_main);
-    return (status.cur_num_blocks != chainActive.Height() || status.cur_num_conflicts != nConflictsReceived);
+    return status.cur_num_blocks != chainActive.Height();
 }
 
 QString TransactionRecord::getTxID() const

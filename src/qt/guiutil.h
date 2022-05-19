@@ -6,16 +6,17 @@
 #define BITCOIN_QT_GUIUTIL_H
 
 #include "amount.h"
+#include "fs.h"
 
 #include <QEvent>
 #include <QHeaderView>
+#include <QLabel>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QObject>
 #include <QProgressBar>
 #include <QString>
 #include <QTableView>
-
-#include <boost/filesystem.hpp>
 
 class QValidatedLineEdit;
 class SendCoinsRecipient;
@@ -123,7 +124,7 @@ namespace GUIUtil
     void openDebugLogfile();
 
     // Open the config file
-    bool openBitcoinConf();
+    void openBitcoinConf();
 
     // Replace invalid default fonts with known good ones
     void SubstituteFonts(const QString& language);
@@ -194,10 +195,10 @@ namespace GUIUtil
     void restoreWindowGeometry(const QString& strSetting, const QSize &defaultSizeIn, QWidget *parent);
 
     /* Convert QString to OS specific boost path through UTF-8 */
-    boost::filesystem::path qstringToBoostPath(const QString &path);
+    fs::path qstringToBoostPath(const QString &path);
 
     /* Convert OS specific boost path to QString through UTF-8 */
-    QString boostPathToQString(const boost::filesystem::path &path);
+    QString boostPathToQString(const fs::path &path);
 
     /* Convert seconds into a QString with days, hours, mins, secs */
     QString formatDurationStr(int secs);
@@ -211,21 +212,36 @@ namespace GUIUtil
     /* Format a CNodeCombinedStats.nTimeOffset into a user-readable string. */
     QString formatTimeOffset(int64_t nTimeOffset);
 
+    /* Format a qint64 timestamp into a user-readable string (relative time). */
     QString formatNiceTimeOffset(qint64 secs);
 
-#if defined(Q_OS_MAC) && QT_VERSION >= 0x050000
-    // workaround for Qt OSX Bug:
-    // https://bugreports.qt-project.org/browse/QTBUG-15631
-    // QProgressBar uses around 10% CPU even when app is in background
-    class ProgressBar : public QProgressBar
+    class ClickableLabel : public QLabel
     {
-        bool event(QEvent *e) {
-            return (e->type() != QEvent::StyleAnimationUpdate) ? QProgressBar::event(e) : false;
-        }
+        Q_OBJECT
+
+    Q_SIGNALS:
+        /** Emitted when the label is clicked. The relative mouse coordinates of the click are
+         * passed to the signal.
+         */
+        void clicked(const QPoint& point);
+    protected:
+        void mouseReleaseEvent(QMouseEvent *event);
     };
-#else
-    typedef QProgressBar ProgressBar;
-#endif
+
+    class ClickableProgressBar : public QProgressBar
+    {
+        Q_OBJECT
+
+    Q_SIGNALS:
+        /** Emitted when the progressbar is clicked. The relative mouse coordinates of the click are
+         * passed to the signal.
+         */
+        void clicked(const QPoint& point);
+    protected:
+        void mouseReleaseEvent(QMouseEvent *event);
+    };
+
+    typedef ClickableProgressBar ProgressBar;
 
 } // namespace GUIUtil
 

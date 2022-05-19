@@ -16,9 +16,7 @@ OpenURIDialog::OpenURIDialog(const Config *cfg, QWidget *parent) :
     cfg(cfg)
 {
     ui->setupUi(this);
-#if QT_VERSION >= 0x040700
     ui->uriEdit->setPlaceholderText("usdi:");
-#endif
 }
 
 OpenURIDialog::~OpenURIDialog()

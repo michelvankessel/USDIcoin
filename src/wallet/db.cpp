@@ -63,7 +63,7 @@ CDBEnv::~CDBEnv()
 {
     EnvShutdown();
     delete dbenv;
-    dbenv = NULL;
+    dbenv = nullptr;
 }
 
 void CDBEnv::Close()
@@ -157,7 +157,7 @@ CDBEnv::VerifyResult CDBEnv::Verify(const std::string& strFile, bool (*recoverFu
     int result = db.verify(strFile.c_str(), NULL, NULL, 0);
     if (result == 0)
         return VERIFY_OK;
-    else if (recoverFunc == NULL)
+    else if (recoverFunc == nullptr)
         return RECOVER_FAIL;
 
     // Try to recover:
@@ -248,7 +248,7 @@ CDB::CDB(const std::string& strFilename, const char* pszMode, bool fFlushOnClose
     if (strFilename.empty())
         return;
 
-    bool fCreate = strchr(pszMode, 'c') != NULL;
+    bool fCreate = strchr(pszMode, 'c') != nullptr;
     unsigned int nFlags = DB_THREAD;
     if (fCreate)
         nFlags |= DB_CREATE;
@@ -261,7 +261,7 @@ CDB::CDB(const std::string& strFilename, const char* pszMode, bool fFlushOnClose
         strFile = strFilename;
         ++bitdb.mapFileUseCount[strFile];
         pdb = bitdb.mapDb[strFile];
-        if (pdb == NULL) {
+        if (pdb == nullptr) {
             pdb = new Db(bitdb.dbenv, 0);
 
             bool fMockDb = bitdb.IsMock();
@@ -281,7 +281,7 @@ CDB::CDB(const std::string& strFilename, const char* pszMode, bool fFlushOnClose
 
             if (ret != 0) {
                 delete pdb;
-                pdb = NULL;
+                pdb = nullptr;
                 --bitdb.mapFileUseCount[strFile];
                 strFile = "";
                 throw runtime_error(strprintf("CDB: Error %d, can't open database %s", ret, strFilename));
@@ -318,8 +318,8 @@ void CDB::Close()
         return;
     if (activeTxn)
         activeTxn->abort();
-    activeTxn = NULL;
-    pdb = NULL;
+    activeTxn = nullptr;
+    pdb = nullptr;
 
     if (fFlushOnClose)
         Flush();
@@ -334,12 +334,12 @@ void CDBEnv::CloseDb(const string& strFile)
 {
     {
         LOCK(cs_db);
-        if (mapDb[strFile] != NULL) {
+        if (mapDb[strFile] != nullptr) {
             // Close the database handle
             Db* pdb = mapDb[strFile];
             pdb->close(0);
             delete pdb;
-            mapDb[strFile] = NULL;
+            mapDb[strFile] = nullptr;
         }
     }
 }

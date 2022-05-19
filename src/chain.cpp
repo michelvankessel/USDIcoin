@@ -11,7 +11,7 @@ using namespace std;
  * CChain implementation
  */
 void CChain::SetTip(CBlockIndex *pindex) {
-    if (pindex == NULL) {
+    if (pindex == nullptr) {
         vChain.clear();
         return;
     }
@@ -51,7 +51,7 @@ CBlockLocator CChain::GetLocator(const CBlockIndex *pindex) const {
 }
 
 const CBlockIndex *CChain::FindFork(const CBlockIndex *pindex) const {
-    if (pindex == NULL) {
+    if (pindex == nullptr) {
         return NULL;
     }
     if (pindex->nHeight > Height())
@@ -85,7 +85,7 @@ CBlockIndex* CBlockIndex::GetAncestor(int height)
     while (heightWalk > height) {
         int heightSkip = GetSkipHeight(heightWalk);
         int heightSkipPrev = GetSkipHeight(heightWalk - 1);
-        if (pindexWalk->pskip != NULL &&
+        if (pindexWalk->pskip != nullptr &&
             (heightSkip == height ||
              (heightSkip > height && !(heightSkipPrev < heightSkip - 2 &&
                                        heightSkipPrev >= height)))) {

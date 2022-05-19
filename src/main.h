@@ -16,6 +16,7 @@
 #include "amount.h"
 #include "chain.h"
 #include "coins.h"
+#include "fs.h"
 #include "net.h"
 #include "script/script_error.h"
 #include "sync.h"
@@ -87,7 +88,7 @@ static const int MAX_SCRIPTCHECK_THREADS = 16;
 /** -par default (number of script-checking threads, 0 = auto) */
 static const int DEFAULT_SCRIPTCHECK_THREADS = 0;
 /** Number of blocks that can be requested at any given time from a single peer. */
-static const int MAX_BLOCKS_IN_TRANSIT_PER_PEER = 16;
+static const int MAX_BLOCKS_IN_TRANSIT_PER_PEER = 64;
 /** Timeout in seconds during which a peer must stall block download progress before being disconnected. */
 static const unsigned int BLOCK_STALLING_TIMEOUT = 2;
 /** Number of headers sent in one getheaders result. We rely on the assumption that if a peer sends
@@ -136,6 +137,8 @@ static const int64_t DEFAULT_MAX_TIP_AGE = 24 * 60 * 60;
 static const bool DEFAULT_PERMIT_BAREMULTISIG = true;
 static const bool DEFAULT_CHECKPOINTS_ENABLED = true;
 static const bool DEFAULT_TXINDEX = true;
+static const unsigned int DEFAULT_DB_MAX_OPEN_FILES = 1000;
+static const bool DEFAULT_DB_COMPRESSION = true;
 static const unsigned int DEFAULT_BANSCORE_THRESHOLD = 100;
 
 static const bool DEFAULT_TESTSAFEMODE = false;
@@ -205,9 +208,9 @@ extern bool fPruneMode;
 /** Number of MiB of block files that we're trying to stay below. */
 extern uint64_t nPruneTarget;
 /** Block files containing a block-height within MIN_BLOCKS_TO_KEEP of chainActive.Tip() will not be pruned. */
-static const unsigned int MIN_BLOCKS_TO_KEEP = 500;
+static const unsigned int MIN_BLOCKS_TO_KEEP = 288;
 
-static const signed int DEFAULT_CHECKBLOCKS = 50;
+static const signed int DEFAULT_CHECKBLOCKS = 288;
 static const unsigned int DEFAULT_CHECKLEVEL = 3;
 
 // Require that user allocate at least 550MB for block & undo files (blk???.dat and rev???.dat)
@@ -245,7 +248,7 @@ FILE* OpenBlockFile(const CDiskBlockPos &pos, bool fReadOnly = false);
 /** Open an undo file (rev?????.dat) */
 FILE* OpenUndoFile(const CDiskBlockPos &pos, bool fReadOnly = false);
 /** Translation to a filesystem path */
-boost::filesystem::path GetBlockPosFilename(const CDiskBlockPos &pos, const char *prefix);
+fs::path GetBlockPosFilename(const CDiskBlockPos &pos, const char *prefix);
 /** Import blocks from an external file */
 bool LoadExternalBlockFile(const CChainParams& chainparams, FILE* fileIn, CDiskBlockPos *dbp = NULL);
 /** Initialize a new block tree database + block data on disk */
@@ -330,8 +333,6 @@ struct CNodeStateStats {
     int nCommonHeight;
     std::vector<int> vHeightInFlight;
 };
-
-
 
 /** 
  * Count ECDSA signature operations the old-fashioned (pre-0.6) way

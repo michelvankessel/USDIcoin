@@ -8,11 +8,10 @@ print-%: FORCE
 
 DIST_SUBDIRS = secp256k1 univalue
 
-AM_LDFLAGS = $(LIBTOOL_LDFLAGS) $(HARDENED_LDFLAGS) $(GPROF_LDFLAGS) $(SANITIZER_LDFLAGS)
+AM_LDFLAGS =  $(PTHREAD_CFLAGS) $(PTHREAD_LIBS) $(LIBTOOL_LDFLAGS) $(HARDENED_LDFLAGS) $(GPROF_LDFLAGS) $(SANITIZER_LDFLAGS)
 AM_CXXFLAGS = $(DEBUG_CXXFLAGS) $(HARDENED_CXXFLAGS) $(WARN_CXXFLAGS) $(NOWARN_CXXFLAGS) $(ERROR_CXXFLAGS) $(GPROF_CXXFLAGS) $(SANITIZER_CXXFLAGS)
 AM_CPPFLAGS = $(DEBUG_CPPFLAGS) $(HARDENED_CPPFLAGS)
 AM_LIBTOOLFLAGS = --preserve-dup-deps
-PTHREAD_FLAGS = $(PTHREAD_CFLAGS) $(PTHREAD_LIBS)
 EXTRA_LIBRARIES =
 
 if EMBEDDED_UNIVALUE
@@ -113,6 +112,7 @@ BITCOIN_CORE_H = \
   consensus/validation.h \
   core_io.h \
   core_memusage.h \
+  fs.h \
   dstencode.h \
   hash.h \
   cuckoocache.h \
@@ -208,6 +208,7 @@ libbitcoin_server_a_SOURCES = \
   blockencodings.cpp \
   chain.cpp \
   checkpoints.cpp \
+  fs.cpp \
   httprpc.cpp \
   httpserver.cpp \
   init.cpp \
@@ -249,7 +250,7 @@ libbitcoin_zmq_a_SOURCES = \
 endif
 
 
-# wallet: shared between bitcoind and usdi-qt, but only linked
+# wallet: shared between usdid and usdi-qt, but only linked
 # when wallet enabled
 libbitcoin_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
@@ -268,9 +269,9 @@ crypto_libbitcoin_crypto_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 crypto_libbitcoin_crypto_a_SOURCES = \
   crypto/aes.cpp \
   crypto/aes.h \
-  crypto/common.h \
   crypto/chacha20.cpp \
   crypto/chacha20.h \
+  crypto/common.h \
   crypto/hmac_sha256.cpp \
   crypto/hmac_sha256.h \
   crypto/hmac_sha512.cpp \
@@ -319,7 +320,7 @@ libbitcoin_consensus_a_SOURCES = \
   utilstrencodings.h \
   version.h
 
-# common: shared between bitcoind, and usdi-qt and non-server tools
+# common: shared between usdid, and usdi-qt and non-server tools
 libbitcoin_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_common_a_SOURCES = \
@@ -386,8 +387,6 @@ endif
 libbitcoin_cli_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_cli_a_SOURCES = \
-  compat/stdin.h \
-  compat/stdin.cpp \
   rpc/client.cpp \
   $(BITCOIN_CORE_H)
 
@@ -396,9 +395,9 @@ nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 
 # usdid binary #
 usdid_SOURCES = bitcoind.cpp
-usdid_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+usdid_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)  $(LIBEVENT_CFLAGS)
 usdid_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-usdid_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+usdid_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
 usdid_SOURCES += bitcoind-res.rc

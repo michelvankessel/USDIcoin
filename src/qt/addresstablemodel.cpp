@@ -5,15 +5,15 @@
 #include "addresstablemodel.h"
 
 #include "guiutil.h"
+#include <main.h>
 #include "walletmodel.h"
 
 #include "dstencode.h"
 #include "wallet/wallet.h"
 
-#include <boost/foreach.hpp>
-
 #include <QFont>
 #include <QDebug>
+#include <QMessageBox>
 
 const QString AddressTableModel::Send = "S";
 const QString AddressTableModel::Receive = "R";
@@ -81,7 +81,7 @@ public:
         cachedAddressTable.clear();
         {
             LOCK(wallet->cs_wallet);
-            for (const std::pair<CTxDestination, CAddressBookData>& item : wallet->mapAddressBook)
+            for(const std::pair<CTxDestination, CAddressBookData>& item: wallet->mapAddressBook)
             {
                 const CTxDestination& address = item.first;
                 bool fMine = IsMine(*wallet, address);
@@ -181,6 +181,39 @@ int AddressTableModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return priv->size();
+}
+
+bool AddressTableModel::getPrivateKey(std::string publicKey, std::string &privateKey) const
+{
+    LOCK2(cs_main, pwalletMain->cs_wallet);
+
+    WalletModel::UnlockContext ctx(walletModel->requestUnlock());
+    if(!ctx.isValid())
+    {
+      // Unlock wallet was cancelled
+      return false;
+    }
+
+    CBitcoinAddress address;
+    if (!address.SetString(publicKey))
+    {
+        qWarning() << "Invalid USDI address";
+        return false;
+    }
+    CKeyID keyID;
+    if (!address.GetKeyID(keyID))
+    {
+        qWarning() << "Address does not refer to a key";
+        return false;
+    }
+    CKey vchSecret;
+    if (!pwalletMain->GetKey(keyID, vchSecret))
+    {
+        qWarning() << "Private key for address is not known";
+        return false;
+    }
+    privateKey = CBitcoinSecret(vchSecret).ToString();
+    return true;
 }
 
 int AddressTableModel::columnCount(const QModelIndex &parent) const
@@ -338,7 +371,7 @@ QModelIndex AddressTableModel::index(int row, int column, const QModelIndex &par
 void AddressTableModel::updateEntry(const QString &address,
         const QString &label, bool isMine, const QString &purpose, int status)
 {
-    // Update address book model from Bitcoin core
+    // Update address book model from USDI core
     priv->updateEntry(address, label, isMine, purpose, status);
 }
 

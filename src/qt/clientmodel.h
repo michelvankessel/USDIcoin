@@ -10,6 +10,10 @@
 
 #include <atomic>
 
+#include <boost/bind/bind.hpp>
+
+using namespace boost::placeholders;
+
 class AddressTableModel;
 class BanTableModel;
 class OptionsModel;

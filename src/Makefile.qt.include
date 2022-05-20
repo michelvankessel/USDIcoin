@@ -161,8 +161,9 @@ QT_MOC_CPP = \
   qt/moc_walletview.cpp
 
 BITCOIN_MM = \
-	qt/macdockiconhandler.mm \
-	qt/macnotificationhandler.mm
+  qt/macdockiconhandler.mm \
+  qt/macnotificationhandler.mm \
+  qt/macos_appnap.mm
 
 QT_MOC = \
   qt/bitcoin.moc \

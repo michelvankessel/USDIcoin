@@ -199,9 +199,9 @@ BITCOIN_QT_H = \
   qt/guiconstants.h \
   qt/guiutil.h \
   qt/intro.h \
-	qt/macappnapinhibitor.h \
-	qt/macdockiconhandler.h \
-	qt/macnotificationhandler.h \
+  qt/macappnapinhibitor.h \
+  qt/macdockiconhandler.h \
+  qt/macnotificationhandler.h \
   qt/macos_appnap.h \
   qt/modaloverlay.h \
   qt/networkstyle.h \

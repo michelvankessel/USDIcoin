@@ -52,6 +52,10 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/math/distributions/poisson.hpp>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/sequenced_index.hpp>
 #include <boost/thread.hpp>
 
 using namespace std;
@@ -115,7 +119,7 @@ void EraseOrphansFor(NodeId peer) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
  * Returns true if there are nRequired or more blocks of minVersion or above
  * in the last Consensus::Params::nMajorityWindow blocks, starting at pstart and going backwards.
  */
-//static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned nRequired, const Consensus::Params& consensusParams);
+static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned nRequired, const Consensus::Params& consensusParams);
 static void CheckBlockIndex(const Consensus::Params& consensusParams);
 
 /** Constant stuff for coinbase transactions we create: */
@@ -574,7 +578,7 @@ void MaybeSetPeerAsAnnouncingHeaderAndIDs(const CNodeState* nodestate, CNode* pf
             }
         }
         bool fAnnounceUsingCMPCTBLOCK = false;
-        uint64_t nCMPCTBLOCKVersion = 0;
+        uint64_t nCMPCTBLOCKVersion = 1;
         if (lNodesAnnouncingHeaderAndIDs.size() >= 3) {
             // As per BIP152, we only get 3 of our peers to announce
             // blocks using compact encodings.
@@ -1210,7 +1214,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
     if (pfMissingInputs)
         *pfMissingInputs = false;
 
-    // Limit dust
+    // Blackcoin: Limit dust
     int dust_tx_count = 0;
     CAmount min_dust = 100000;
     BOOST_FOREACH(const CTxOut& txout, tx.vout) {
@@ -2008,7 +2012,6 @@ bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoins
                                     REJECT_INVALID, "bad-txns-premature-spend-of-coinbase");
             }
 
-
             // Check transaction timestamp
             if (coins->nTime > tx.nTime)
                     return state.DoS(100, error("CheckInputs() : transaction timestamp earlier than input transaction"),
@@ -2391,9 +2394,6 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
         return true;
     }
 
-    // Set proof-of-stake hash modifier
-    pindex->nStakeModifier = ComputeStakeModifier(pindex->pprev, block.IsProofOfStake() ? block.vtx[1].vin[0].prevout.hash : block.GetHash());
-
     // Check difficulty
     if (block.nBits != GetNextTargetRequired(pindex->pprev, &block, chainparams.GetConsensus(), block.IsProofOfStake()))
          return state.DoS(100, error("ConnectBlock(): incorrect difficulty"),
@@ -2455,9 +2455,9 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
 
     // BIP66 is always active
     flags |= SCRIPT_VERIFY_DERSIG;
-    // USDI also requires DER encoding of pubkeys
+    // blackcoin: also requires DER encoding of pubkeys
     flags |= SCRIPT_VERIFY_DERKEY;
-    // USDI also requires low S in sigs
+    // Blackcoin: also requires low S in sigs
     flags |= SCRIPT_VERIFY_LOW_S;
 
     // Enforce CHECKLOCKTIMEVERIFY (BIP65)
@@ -2578,6 +2578,9 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
                                        nActualStakeReward, blockReward),
                                        REJECT_INVALID, "bad-cs-amount");
     }
+
+    // Set proof-of-stake hash modifier
+    pindex->nStakeModifier = ComputeStakeModifier(pindex->pprev, block.IsProofOfStake() ? block.vtx[1].vin[0].prevout.hash : block.GetHash());
 
     if (!control.Wait())
         return state.DoS(100, false);
@@ -3305,7 +3308,7 @@ static CBlockIndex* AddToBlockIndex(const CBlockHeader& block)
 bool ReceivedBlockTransactions(const CBlock &block, CValidationState& state, CBlockIndex *pindexNew, const CDiskBlockPos& pos)
 {
     if (block.IsProofOfStake())
-            pindexNew->SetProofOfStake();
+    pindexNew->SetProofOfStake();
     pindexNew->nTx = block.vtx.size();
     pindexNew->nChainTx = 0;
     pindexNew->nFile = pos.nFile;
@@ -3891,7 +3894,7 @@ static bool AcceptBlock(const CBlock& block, CValidationState& state, const CCha
     return true;
 }
 
-/*static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned nRequired, const Consensus::Params& consensusParams)
+static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned nRequired, const Consensus::Params& consensusParams)
 {
     unsigned int nFound = 0;
     for (int i = 0; i < consensusParams.nMajorityWindow && nFound < nRequired && pstart != NULL; i++)
@@ -3901,7 +3904,7 @@ static bool AcceptBlock(const CBlock& block, CValidationState& state, const CCha
         pstart = pstart->pprev;
     }
     return (nFound >= nRequired);
-}*/
+}
 
 bool static IsCanonicalBlockSignature(const CBlock* pblock, bool checkLowS)
 {
@@ -5237,7 +5240,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             // We send this to non-NODE NETWORK peers as well, because
             // they may wish to request compact blocks from us
             bool fAnnounceUsingCMPCTBLOCK = false;
-            uint64_t nCMPCTBLOCKVersion = 0;
+            uint64_t nCMPCTBLOCKVersion = 1;
             pfrom->PushMessage(NetMsgType::SENDCMPCT, fAnnounceUsingCMPCTBLOCK, nCMPCTBLOCKVersion);
         }
     }

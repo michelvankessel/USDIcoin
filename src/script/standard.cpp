@@ -140,7 +140,7 @@ bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, vector<vector<unsi
             else if (opcode2 == OP_SMALLINTEGER)
             {   // Single-byte small integer pushed onto vSolutions
                 if (opcode1 == OP_0 ||
-                        (opcode1 >= OP_1 && opcode1 <= OP_16))
+                    (opcode1 >= OP_1 && opcode1 <= OP_16))
                 {
                     char n = (char)CScript::DecodeOP_N(opcode1);
                     vSolutionsRet.push_back(valtype(1, n));
@@ -165,7 +165,6 @@ bool ExtractDestination(const CScript& scriptPubKey, CTxDestination& addressRet)
 {
     vector<valtype> vSolutions;
     txnouttype whichType;
-
     if (!Solver(scriptPubKey, whichType, vSolutions))
         return false;
 
@@ -225,7 +224,7 @@ bool ExtractDestinations(const CScript& scriptPubKey, txnouttype& typeRet, vecto
         nRequiredRet = 1;
         CTxDestination address;
         if (!ExtractDestination(scriptPubKey, address))
-            return false;
+           return false;
         addressRet.push_back(address);
     }
 

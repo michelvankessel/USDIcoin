@@ -118,7 +118,7 @@ public:
         consensus.nCoinbaseMaturity = 240;
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000000000100001");
+        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000000073a8f02a8a3a5304");
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -178,11 +178,11 @@ public:
 
         checkpointData = (CCheckpointData) {
                     boost::assign::map_list_of
-                    ( 0, uint256S("0x0000000042b9aed1976bfddc24a145852325d9f453f0a52d40154de11eac7bd9")),
-                    1652770800, // * UNIX timestamp of last checkpoint block
-                    0,    // * total number of transactions between genesis and last checkpoint
+                    ( 1200, uint256S("0x00000002bb0ac8c7fdd7b15ce49d50848e4937965e8cf38afd519e840e21ffe6")), // end of pre-mine
+                    1652845143, // * UNIX timestamp of last checkpoint block
+                    1408,    // * total number of transactions between genesis and last checkpoint
                                 //   (the tx=... number in the SetBestChain debug.log lines)
-                    1300      // * estimated number of transactions per day after checkpoint
+                    2500      // * estimated number of transactions per day after checkpoint
         };
     }
 };
